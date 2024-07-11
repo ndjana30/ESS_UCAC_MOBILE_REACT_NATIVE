@@ -1,7 +1,8 @@
-import { View, Text, ScrollView, StyleSheet,ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView, StyleSheet,ActivityIndicator,Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import { useRoute } from '@react-navigation/native'
+import course from '../Components/Images/course.png'
 
 export default function C_D({ navigation}) {
 
@@ -13,7 +14,8 @@ export default function C_D({ navigation}) {
     const [lessons,setLessons]= useState([])
 
     useEffect(()=>{
-        axios.get(`https://essucacmobile.onrender.com/api/v1/courses/${course_id}/lecturers/all`)
+       const getLecturers= async() =>
+        { await axios.get(`https://essucacmobile.onrender.com/api/v1/courses/${course_id}/lecturers/all`)
         .then(function(response)
       {
         // console.log(response.data);
@@ -23,9 +25,9 @@ export default function C_D({ navigation}) {
       .catch(function(error){
         console.info(error)
       })
-
-
-      axios.get(`https://essucacmobile.onrender.com/api/v1/courses/${course_id}/lessons/all`)
+    }
+getLecturers();
+    const getLessons=async()=>{   await axios.get(`https://essucacmobile.onrender.com/api/v1/courses/${course_id}/lessons/all`)
       .then(function(response)
     {
       // console.log(response.data);
@@ -35,11 +37,13 @@ export default function C_D({ navigation}) {
     .catch(function(error){
       console.info(error)
     })
-    })    
-   
+  }
+getLessons();
+    },[])    
+  
 
   return (
-    <ScrollView>
+    <View>
         <View style={styles.first}>
             <View style={styles.first_line_1}>
                <Text style={styles.text1}>
@@ -74,23 +78,59 @@ export default function C_D({ navigation}) {
                 lessons.length==0 ? <Text> {<ActivityIndicator size="small" color="#0000ff"/>} No Lessons Yet</Text>: 
                 lessons.map((item,index)=>{
                     return(
-                        <View style={styles.second_1} key={index}>
-                            <Text onPress={()=>{navigation.navigate('Lesson_Details',{lesson_id:item.id})}} style={styles.second_text}> {item.name}</Text>
-                        </View>
+                        // <View style={styles.second_1} key={index}>
+                        //     <Text onPress={()=>{navigation.navigate('Lesson_Details',{lesson_id:item.id})}} style={styles.second_text}> {item.name}</Text>
+                        // </View>
+
+
+
+
+
+
+<View key={index} style={styles.shadowBox}>
+         
+{
+<Image 
+  source={course}
+  style={styles.courseImage}
+  // onLoadStart={() => console.log('Image loading started')}
+  // onLoadEnd={() => console.log('Image loaded successfully')}
+  // onError={(error) => console.error('Failed to load image:', error)}
+  >
+
+  </Image> 
+}
+ {/* onPress={ navigation.navigate('Course_Details',{course_id:item.id}) } */}
+  <Text style={styles.second_text}
+  onPress={ ()=>{navigation.navigate('Lesson_Details',{lesson_id:item.id})} }
+ >
+  {item.name}
+  </Text>
+  
+</View>
+
+                    
+
+
+
+
+
+
                     )
                 })
             }
             
         </ScrollView>
-    </ScrollView>
+    </View>
   )
 }
 
 const styles= StyleSheet.create({
     first:{
         backgroundColor:"#5FB18D",
+        opacity:0.7,
         display:'flex',
-        height:300,
+        height:200,
         flexDirection:'column',
 
     },
@@ -146,5 +186,26 @@ const styles= StyleSheet.create({
     },
     second_text:{
         margin:"auto"
-    }
+    },
+    courseImage:{
+      width: "100%", 
+      height: 200,
+    },shadowBox: {
+      display:'flex',
+      flexDirection:'column',
+      shadowColor: "rgba(0, 0, 0, 0.75)",
+      shadowOffset: { width: 0, height: 2 }, // Set the offset of the shadow
+      shadowRadius: 3.84, // Set the blur radius of the shadow
+      marginTop:20,
+      marginBottom:20,
+      justifyContent:'center',
+      alignItems:'center',
+      borderWidth:1,
+      borderRadius:10,
+      padding:5,
+      height:250,
+      width:"90%",
+      alignSelf:'center',
+      backgroundColor:"#5FB18D"
+    },
 })

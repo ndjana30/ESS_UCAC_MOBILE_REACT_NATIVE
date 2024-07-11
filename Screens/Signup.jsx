@@ -16,7 +16,7 @@ export default function Signup({ navigation })
 {
   useEffect(() => {
     console.log("IN SIGNUP SCREEN");
-  });
+  },[]);
   
   const [username,setUsername] = useState("");
   const [password,setPassword] = useState("");

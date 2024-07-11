@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, FlatList, ScrollView,Image,ActivityIndicator } 
 import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import gym from '../Components/Images/gym.jpg'
+import course from '../Components/Images/course.png'
 
 export default function Courses({ navigation }) 
 {
@@ -10,6 +11,7 @@ export default function Courses({ navigation })
    
     useEffect(()=>
         {
+          console.log("IN COURSES");
         axios.get(`https://essucacmobile.onrender.com/api/v1/courses/all`)
         .then(function(response)
         {
@@ -21,7 +23,7 @@ export default function Courses({ navigation })
             console.info(error)
         })
             
-    })
+    },[])
 
     
     
@@ -35,28 +37,21 @@ export default function Courses({ navigation })
          courseList.map((item,index) => (
         
         <View key={index} style={styles.shadowBox}>
-         
-          {
-          /* <Image 
-            source={gym}
-            style={{width: 100, height: 100}}
+          
+          <Image 
+            source={course}
+            style={styles.courseImage}
             // onLoadStart={() => console.log('Image loading started')}
             // onLoadEnd={() => console.log('Image loaded successfully')}
             // onError={(error) => console.error('Failed to load image:', error)}
             >
-          
-            </Image> */
-          }
-           {/* onPress={ navigation.navigate('Course_Details',{course_id:item.id}) } */}
+            </Image> 
             <Text style={styles.courseText}
             onPress={ ()=>{navigation.navigate('C_D',{course_id:item.id,course_name:item.name})} }
            >
             {item.name}
             </Text>
-            
         </View>
-     
-        
           )) 
       }
       </ScrollView>
@@ -83,9 +78,13 @@ const styles = StyleSheet.create({
       borderWidth:1,
       borderRadius:10,
       padding:5,
-      height:100,
-      width:"100%",
+      height:250,
+      width:"90%",
       alignSelf:'center',
       backgroundColor:"#5FB18D"
+    },
+    courseImage:{
+      width: "100%", 
+      height: 200,
     }
 })

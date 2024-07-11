@@ -17,7 +17,29 @@ export default function Login({ navigation })
 {
   useEffect(() => {
     console.log("IN LOGIN SCREEN");
-  });
+
+    //  const token =  AsyncStorage.getItem('token');
+    //     if (token) {
+    //       console.log('token is '+ token);
+    //   axios.get('https://essucacmobile.onrender.com/api/v1/auth/user/get',
+    //      { 
+    //       headers:
+    //        {
+    //         'Authorization': token
+    //       }
+    // })
+    // .then(function(response){
+    //   console.log("response data is: "+response.data);
+    //   response.data == 'LECTURER'? navigation.navigate('Lecturer_Courses') : navigation.navigate('Courses');
+    // })
+    // .catch(function(error)
+    // {
+    //   console.info(error)
+    // })
+    //     } else {
+    //       console.log('No token found in storage.');
+    //     }
+  },[]);
   
   const [username,setUsername] = useState("");
   const [password,setPassword] = useState("");
@@ -25,6 +47,38 @@ export default function Login({ navigation })
 
   function getCredentials()
   {
+    // const retrieveToken = async () => {
+    //     // I GET THE TOKEN HERE TO VERIFY THE LEVEL OF AUTHORITY OF THE USER THAT LOGS IN
+    //   try {
+    // //     const token = await AsyncStorage.getItem('token');
+    // //     if (token) {
+    // //       console.log('token is '+ token);
+    // //   axios.get('https://essucacmobile.onrender.com/api/v1/auth/user/get',
+    // //      { 
+    // //       headers:
+    // //        {
+    // //         'Authorization': token
+    // //       }
+    // // })
+    // // .then(function(response){
+    // //   console.log("response data is: "+response.data);
+    // //   response.data == 'LECTURER'? navigation.navigate('Lecturer_Courses') : navigation.navigate('Courses');
+    // // })
+    // // .catch(function(error)
+    // // {
+    // //   console.info(error)
+    // // })
+    // //     } else {
+    // //       console.log('No token found in storage.');
+    // //     }
+    //   } catch (error) 
+    //   {
+    //     console.error('Error retrieving token from storage:', error);
+    //   }
+    // };
+
+    
+
     console.log("username is:\t"+username);
     console.log("password is:\t"+password);
     axios.post('https://essucacmobile.onrender.com/api/v1/auth/user/login',{
@@ -32,15 +86,40 @@ export default function Login({ navigation })
       password:password
     })
     .then(function(response){
-      console.log(response.data.tokenType + response.data.accessToken);
+      // console.log(response.data.tokenType + response.data.accessToken);
+      const tk = response.data.accessToken
       try {
-        AsyncStorage.setItem('token', JSON.stringify(response.data.tokenType + response.data.accessToken));
+        AsyncStorage.setItem('token', JSON.stringify(tk));
         console.log("successfuly set the token in storage");
-        navigation.navigate('Courses');
+
+         const getToken = async ()=>{
+          const tt = await AsyncStorage.getItem('token');
+          console.log("token got is: "+ tt);
+          console.log("token sent is: "+"Bearer "+`${JSON.parse(tt)}`)
+          const config = {
+    headers: {
+        Authorization: "Bearer "+`${JSON.parse(tt)}`
+    }
+};
+          axios.get('https://essucacmobile.onrender.com/api/v1/auth/user/get',config)
+          .then(function(response){
+            response.data == 'LECTURER'? navigation.navigate('Lecturer_Courses') : navigation.navigate('Courses');
+          })
+          .catch(function(error){
+            console.info(error);
+          })
+         } 
+         getToken();
+       
+        // navigation.navigate('Courses');
       } catch (error) {
         console.log("Could not set the token in storage");
       }
-      
+
+
+      // I GET THE TOKEN HERE TO VERIFY THE LEVEL OF AUTHORITY OF THE USER THAT LOGS IN
+      // retrieveToken();
+     
       
     })
     .catch(function(error)
@@ -72,7 +151,7 @@ export default function Login({ navigation })
           />
            <TextInput
             style={styles.input}
-            placeholder="EMAIL OR USERNAME"
+            placeholder="PASSWORD"
             value={password}
             secureTextEntry
             onChangeText={setPassword}
